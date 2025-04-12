@@ -34,8 +34,8 @@ BEGIN
     
     APEX_UTIL.create_user(
         p_user_name       => 'ADMIN',
-        p_email_address   => 'jayala@solvet-it.com.py',
-        p_web_password    => 'pAwKWainteRA',
+        p_email_address   => 'me@example.com',
+        p_web_password    => 'OrclAPEX1999!',
         p_developer_privs => 'ADMIN' );
         
     APEX_UTIL.set_security_group_id( null );
@@ -56,6 +56,7 @@ cd /home/oracle/
 
 # Install software
 su - <<EOF
+cat /dev/null > /etc/dnf/vars/ociregion
 dnf update -y
 dnf install sudo -y
 dnf install nano -y
@@ -78,7 +79,7 @@ EOF
 
 # Install ORDS
 su - <<EOF
-yum-config-manager --add-repo=http://yum.oracle.com/repo/OracleLinux/OL8/oracle/software/x86_64
+yum-config-manager --add-repo=https://yum.oracle.com/repo/OracleLinux/OL8/oracle/software/x86_64
 dnf install ords -y
 EOF
 
@@ -172,3 +173,4 @@ echo "Elapsed time: ${hours}h ${minutes}m ${seconds}s"
 
 
 echo '### APEX INSTALLED ###'
+                                                                 

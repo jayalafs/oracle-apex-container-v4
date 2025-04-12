@@ -27,17 +27,8 @@ enabled=1\n\
 gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol8\n" \
 > /etc/yum.repos.d/oracle-linux-ol8.repo
 
-# Instalacion de paquetes
-RUN dnf update -y && \
-    dnf install -y sudo nano java-17-openjdk zip unzip curl && \
-    dnf clean all
-    
-# Crear los directorios necesarios
-RUN mkdir -p /home/oracle/software/apex \
-    /home/oracle/software/ords \
-    /home/oracle/scripts/startup \
-    /etc/ords/config \
-    /home/oracle/logs
+# Crear los directorios necesarios antes de copiar scripts
+RUN mkdir -p /home/oracle/scripts/startup
 
 # Copiar los scripts al contenedor
 COPY ./src/00_start_apex_ords_installer.sh /home/oracle/scripts/startup/00_start_apex_ords_installer.sh
@@ -46,9 +37,6 @@ COPY ./src/unattended_apex_install_23c.sh /home/oracle/unattended_apex_install_2
 # Dar permisos de ejecución a los scripts
 RUN chmod +x /home/oracle/scripts/startup/00_start_apex_ords_installer.sh
 RUN chmod +x /home/oracle/unattended_apex_install_23c.sh
-
-# Ejecutar el script de instalación de APEX durante la construcción
-RUN /home/oracle/scripts/startup/00_start_apex_ords_installer.sh
 
 # Exponer los puertos necesarios
 EXPOSE 1521 5500 8080 8443 22
