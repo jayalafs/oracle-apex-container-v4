@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  oracle-db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oracle-container
+    ports:
+      - "127.0.0.1:1521:1521"   # Oracle Listener SOLO desde localhost
+      - "127.0.0.1:5500:5500"   # EM Express SOLO desde localhost
+      - "0.0.0.0:8023:8080"     # ORDS APEX expuesto externamente
+      - "0.0.0.0:9043:8443"     # ORDS HTTPS expuesto externamente
+    environment:
+      - ORACLE_PWD=E
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+    restart: unless-stopped
+    networks:
+      apex_prod_net:
+        ipv4_address: 172.41.1.10
+
+volumes:
+  oracle_data:
+
+networks:
+  apex_prod_net:
+    name: apex_prod_net
+    driver: bridge
+    attachable: true
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.41.0.0/16
+          ip_range: 172.41.1.0/24
+          gateway: 172.41.1.254
