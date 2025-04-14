@@ -12,7 +12,7 @@ services:
       - "0.0.0.0:8023:8080"     # ORDS APEX expuesto externamente
       - "0.0.0.0:9043:8443"     # ORDS HTTPS expuesto externamente
     environment:
-      - ORACLE_PWD=E
+      - ORACLE_PWD=pAwKWainteRA
     volumes:
       - oracle_data:/opt/oracle/oradata
     restart: unless-stopped

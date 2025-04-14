@@ -173,4 +173,3 @@ echo "Elapsed time: ${hours}h ${minutes}m ${seconds}s"
 
 
 echo '### APEX INSTALLED ###'
-                                                                 
