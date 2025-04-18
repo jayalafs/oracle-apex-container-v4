@@ -8,25 +8,25 @@ services:
       - "1521:1521"
       - "5500:5500"
     environment:
-      - ORACLE_PWD=${ORACLE_PWD}
+      - ORACLE_PWD=Oracle123
     volumes:
-      - oracle_data:/opt/oracle/oradata
+      - ./ords_config:/etc/ords/config
     networks:
-      ${NETWORK_NAME}:
-        ipv4_address: ${ORACLE_DB_IP}
+      apex_prod_net:
+        ipv4_address: 172.41.1.10
 
   tomcat:
     build:
       context: ./tomcat
       args:
-        ORDS_VERSION: ${ORDS_VERSION}
-        ORDS_HOME: ${ORDS_HOME}
-        ORDS_CONFIG: ${ORDS_CONFIG}
-        DB_HOST: ${DB_HOST}
-        DB_PORT: ${DB_PORT}
-        DB_SERVICE: ${DB_SERVICE}
-        SYS_PASSWORD: ${SYS_PASSWORD}
-        APEX_USER: ${APEX_USER}
+        ORDS_VERSION: 23.4.0
+        ORDS_HOME: /opt/ords
+        ORDS_CONFIG: /etc/ords/config
+        DB_HOST: oracle-db
+        DB_PORT: 1521
+        DB_SERVICE: FREEPDB1
+        SYS_PASSWORD: Oracle123
+        APEX_USER: APEX_PUBLIC_USER
     container_name: tomcat-ords
     ports:
       - "8080:8080"
@@ -36,22 +36,22 @@ services:
     depends_on:
       - oracle-db
     environment:
-      - TZ=${TZ}
+      - TZ=America/Asuncion
     networks:
-      ${NETWORK_NAME}:
-        ipv4_address: ${TOMCAT_IP}
+      apex_prod_net:
+        ipv4_address: 172.41.1.11
 
 volumes:
   oracle_data:
 
 networks:
-  ${NETWORK_NAME}:
-    name: ${NETWORK_NAME}
+  apex_prod_net:
+    name: apex_prod_net
     driver: bridge
     attachable: true
     ipam:
       driver: default
       config:
-        - subnet: ${SUBNET}
-          ip_range: ${IP_RANGE}
-          gateway: ${GATEWAY}
+        - subnet: 172.41.0.0/16
+          ip_range: 172.41.1.0/24
+          gateway: 172.41.1.254
