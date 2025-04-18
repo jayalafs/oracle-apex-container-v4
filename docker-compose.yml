@@ -31,7 +31,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./ords_config:${ORDS_CONFIG}
+      - ./ords_config:/etc/ords/config
       - ./appfiles:/usr/local/tomcat/webapps/appfiles
     depends_on:
       - oracle-db
