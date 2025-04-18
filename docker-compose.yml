@@ -17,7 +17,7 @@ services:
 
   tomcat:
     build:
-      context: .
+      context: ./tomcat
       args:
         ORDS_VERSION: 23.4.0
         ORDS_HOME: /opt/ords
