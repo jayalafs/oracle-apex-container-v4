@@ -1,36 +1,57 @@
-version: "3.8"
+version: '3.9'
 
 services:
   oracle-db:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: oracle-container
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-db
     ports:
-      - "127.0.0.1:1521:1521"   # Oracle Listener SOLO desde localhost
-      - "127.0.0.1:5500:5500"   # EM Express SOLO desde localhost
-      - "0.0.0.0:8023:8080"     # ORDS APEX expuesto externamente
-      - "0.0.0.0:9043:8443"     # ORDS HTTPS expuesto externamente
+      - "1521:1521"
+      - "5500:5500"
     environment:
-      - ORACLE_PWD=pAwKWainteRA
+      - ORACLE_PWD=${ORACLE_PWD}
     volumes:
       - oracle_data:/opt/oracle/oradata
-    restart: unless-stopped
     networks:
-      apex_prod_net:
-        ipv4_address: 172.41.1.10
+      ${NETWORK_NAME}:
+        ipv4_address: ${ORACLE_DB_IP}
+
+  tomcat:
+    build:
+      context: ./tomcat
+      args:
+        ORDS_VERSION: ${ORDS_VERSION}
+        ORDS_HOME: ${ORDS_HOME}
+        ORDS_CONFIG: ${ORDS_CONFIG}
+        DB_HOST: ${DB_HOST}
+        DB_PORT: ${DB_PORT}
+        DB_SERVICE: ${DB_SERVICE}
+        SYS_PASSWORD: ${SYS_PASSWORD}
+        APEX_USER: ${APEX_USER}
+    container_name: tomcat-ords
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./ords_config:${ORDS_CONFIG}
+      - ./appfiles:/usr/local/tomcat/webapps/appfiles
+    depends_on:
+      - oracle-db
+    environment:
+      - TZ=${TZ}
+    networks:
+      ${NETWORK_NAME}:
+        ipv4_address: ${TOMCAT_IP}
 
 volumes:
   oracle_data:
 
 networks:
-  apex_prod_net:
-    name: apex_prod_net
+  ${NETWORK_NAME}:
+    name: ${NETWORK_NAME}
     driver: bridge
     attachable: true
     ipam:
       driver: default
       config:
-        - subnet: 172.41.0.0/16
-          ip_range: 172.41.1.0/24
-          gateway: 172.41.1.254
+        - subnet: ${SUBNET}
+          ip_range: ${IP_RANGE}
+          gateway: ${GATEWAY}

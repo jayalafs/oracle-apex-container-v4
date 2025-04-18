@@ -85,9 +85,58 @@ gpgcheck=1
 enabled=1
 gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol8
 
+# Corregir el repositorio YUM de Oracle Linux 8
+RUN printf "[ol8_developer]\n\
+name=Oracle Linux 8 Development Packages (\$basearch)\n\
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/developer/\$basearch/\n\
+gpgcheck=1\n\
+enabled=0\n\
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol8\n\
+\n\
+[ol8_baseos_latest]\n\
+name=Oracle Linux 8 BaseOS Latest (\$basearch)\n\
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/baseos/latest/\$basearch/\n\
+gpgcheck=1\n\
+enabled=1\n\
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol8\n\
+\n\
+[ol8_appstream]\n\
+name=Oracle Linux 8 Application Stream (\$basearch)\n\
+baseurl=https://yum.oracle.com/repo/OracleLinux/OL8/appstream/\$basearch/\n\
+gpgcheck=1\n\
+enabled=1\n\
+gpgkey=https://yum.oracle.com/RPM-GPG-KEY-oracle-ol8\n" \
+> /etc/yum.repos.d/oracle-linux-ol8.repo
+
 
 # Instalacion de paquetes
 RUN dnf update -y && \
     dnf install -y sudo nano java-17-openjdk zip unzip curl && \
     dnf clean all
+
+
+Una vez instalado completamente podemos agregar el idioma español, luego de esto ya saldra la opcion de cambiar el idioma
+
+cd /home/oracle/apex/builder/es
+sqlplus / as sysdba
+
+ALTER SESSION SET CONTAINER = FREEPDB1;
+
+@f4000_es.sql
+@f4100_es.sql
+@f4150_es.sql
+@f4300_es.sql
+@f4350_es.sql
+@f4400_es.sql
+@f4470_es.sql
+@f4500_es.sql
+@f4550_es.sql
+@f4600_es.sql
+@f4650_es.sql
+@f4700_es.sql
+@f4750_es.sql
+@f4800_es.sql
+@f4850_es.sql
+@load_es.sql
+@rt_es.sql
 
